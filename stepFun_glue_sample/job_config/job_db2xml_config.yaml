@@ -1,0 +1,44 @@
+# データベース接続設定
+database:
+  # Secrets ManagerのARN
+  secret_arn: "${database_secret_arn}"
+# 出力設定
+output:
+  file_path: "${output_s3_path}"
+  encoding: utf-8
+  root_element: data
+  record_element: record
+# ETL設定
+etl:
+  # 対象テーブルとクエリ
+  source_query: |
+    SELECT 
+      t1.id,
+      t1.name,
+      t1.created_at,
+      t2.category
+    FROM table1 t1
+    LEFT JOIN table2 t2 ON t1.category_id = t2.id
+    WHERE t1.status = 'active'
+  # 出力項目マッピング
+  mappings:
+    - source_column: id
+      target_element: ID
+      type: integer
+
+source_column: name
+target_element: FullName
+type: string
+
+source_column: created_at
+target_element: CreatedDate
+type: datetime
+format: "%Y-%m-%d %H:%M:%S"
+
+source_column: category target_element: CategoryName type: string nullable: true # データ変換ルール transformations:
+column: name
+type: upper_case
+
+column: category
+type: replace_null
+value: "未分類"

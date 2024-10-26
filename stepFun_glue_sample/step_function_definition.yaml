@@ -1,0 +1,11 @@
+StartAt: GlueJob
+States:
+  GlueJob:
+    Type: Task
+    Resource: arn:aws:states:::glue:startJobRun.sync
+    Parameters:
+      JobName: job_db_2_xml_file
+      Arguments:
+        '--job-language': python
+        '--script-location': ${S3_BUCKET_LOCATION}/stepFun_glue_sample/job_db_2_xml_file.py  # Retrieve S3 bucket path from environment variable
+    End: true
